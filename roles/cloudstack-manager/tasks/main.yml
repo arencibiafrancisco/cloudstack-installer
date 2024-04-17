@@ -1,0 +1,48 @@
+---
+
+- name: Update repo list
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Add CloudStack repository
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/cloudstack.list
+    line: "deb https://download.cloudstack.org/ubuntu {{ ansible_distribution_release | lower }} {{ cloudstack_release }}"
+    create: true
+    mode: '0644'
+
+- name: Download CloudStack GPG key
+  ansible.builtin.get_url:
+    url: https://download.cloudstack.org/release.asc
+    dest: "/tmp/cloudstack-release.asc"
+    mode: '0644'
+
+- name: Import CloudStack GPG key
+  ansible.builtin.command:
+    cmd: gpg --dearmor -o /etc/apt/trusted.gpg.d/cloudstack.gpg /tmp/cloudstack-release.asc
+  args:
+    creates: /etc/apt/trusted.gpg.d/cloudstack.gpg
+
+- name: Update apt cache again to include new repositories
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install Cloudstack Management
+  ansible.builtin.apt:
+    name:
+      - cloudstack-management
+    state: present
+
+- name: Setup DB
+  ansible.builtin.include_tasks: ./setupdb.yml
+
+- name: Ensure CloudStack Usage Service is installed
+  ansible.builtin.apt:
+    name: cloudstack-usage
+    state: present
+
+- name: Ensure CloudStack Usage Service is started
+  ansible.builtin.service:
+    name: cloudstack-usage
+    state: started

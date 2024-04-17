@@ -1,0 +1,10 @@
+---
+- name: Install snapd
+  ansible.builtin.apt:
+    name: snapd
+    state: present
+
+- name: Install cloudmonkey using snap
+  community.general.snap:
+    name: cloudmonkey
+    classic: true

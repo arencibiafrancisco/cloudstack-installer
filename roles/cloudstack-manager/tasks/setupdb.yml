@@ -1,0 +1,8 @@
+---
+- name: Cloudstack-setup-databases
+  ansible.builtin.command: "/usr/bin/cloudstack-setup-databases 'cloud':'{{ mysql_cloud_password }}'@'localhost' --deploy-as=root:{{ mysql_root_password }}"
+  changed_when: true
+
+- name: Setup CloudStack Manager
+  ansible.builtin.command: /usr/bin/cloudstack-setup-management
+  changed_when: true

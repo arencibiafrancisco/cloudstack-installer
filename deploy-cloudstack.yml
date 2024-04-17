@@ -1,0 +1,21 @@
+---
+- name: Cloudstack Management Server Deployment
+  hosts: acs-manager
+  roles:
+    - mysql
+    - nfs-server
+    - cloudstack-manager
+    - cloudmonkey
+  tasks:
+    - name: Include seedstorage.yml
+      ansible.builtin.include_tasks: ./roles/cloudstack-manager/tasks/seedstorage.yml
+  vars:
+    - mysql_root_password: "{{ mysql_root_password }}"
+    - mysql_cloud_password: "{{ mysql_cloud_password }}"
+    - cloudstack_release: "{{ cloudstack_release }}"
+    - old_mysql_root_password: ""
+    - systemvm_templates:
+        - url: "http://packages.shapeblue.com/systemvmtemplate/{{ cloudstack_release }}/systemvmtemplate-{{ cloudstack_release }}.0-kvm.qcow2.bz2"
+          hypervisor: "kvm"
+        - url: "http://packages.shapeblue.com/systemvmtemplate/{{ cloudstack_release }}/systemvmtemplate-{{ cloudstack_release }}.0-xen.vhd.bz2"
+          hypervisor: "xenserver"

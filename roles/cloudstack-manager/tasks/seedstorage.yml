@@ -1,0 +1,11 @@
+---
+- name: Install System VM templates (XenServer)
+  ansible.builtin.command: >
+    /usr/share/cloudstack-common/scripts/storage/secondary/cloud-install-sys-tmplt
+    -m /exports/secondary
+    -u "{{ item.url }}"
+    -h "{{ item.hypervisor }}"
+    -F
+  register: install_sys_tmplt_output
+  loop: "{{ systemvm_templates }}"
+  changed_when: "'Successfully installed system VM template' in install_sys_tmplt_output.stdout"

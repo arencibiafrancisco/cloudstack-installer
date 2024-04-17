@@ -1,0 +1,44 @@
+---
+- name: Ensure NFS packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nfs-common
+    - nfs-kernel-server
+
+- name: Ensure rpcbind is running
+  ansible.builtin.service:
+    name: rpcbind
+    state: started
+
+- name: Ensure NFS ports are configured
+  ansible.builtin.blockinfile:
+    path: /etc/default/nfs-kernel-server
+    block: |
+      RPCMOUNTDOPTS="-p 892"
+      RPCRQUOTADOPTS="-p 875"
+      RPCNFSDOPTS="-p 2049"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  notify: Restart nfs-kernel-server
+
+- name: Create export directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0777'
+    owner: root
+    group: root
+  loop:
+    - "/exports/secondary"
+    - "/exports/primary"
+
+- name: Configure Exports
+  ansible.builtin.copy:
+    content: "/exports *(rw,async,no_root_squash)"
+    dest: /etc/exports
+    mode: '0644'
+
+- name: Export mounts
+  ansible.builtin.command: exportfs -a
+  changed_when: false
