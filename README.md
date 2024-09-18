@@ -47,8 +47,20 @@ To install Ansible, sshpass and disable the host key checking; run:
 
 To install CloudStack, ```cd``` to where you have placed the plays and run:
 
+
+For local DB
 ```
-ansible-playbook deploy-cloudstack.yml -i hosts -k -u root -e "mysql_root_password=Cl0ud5tack-MySQL mysql_cloud_password=Cl0ud5tack-Cl0ud cloudstack_release=4.19"
+ansible-playbook deploy-cloudstack.yml -i hosts -k -u root -e "mysql_root_password=Cl0ud5tack-MySQL mysql_cloud_password=Cl0ud5tack-Cl0ud cloudstack_release=4.19 cloudstack_systemvmtemplate=4.19.1 install_local_db=true"
+```
+
+For Adding Cloudstack master node MariaDB Galera cluster
+```
+ansible-playbook deploy-cloudstack.yml -i hosts -k -u root -e "mysql_root_password=Cl0ud5tack-MySQL mysql_cloud_password=Cl0ud5tack-Cl0ud cloudstack_release=4.19 cloudstack_systemvmtemplate=4.19.1 nodetype=master db_endpoint=10.35.10.78"
+```
+
+For Adding Cloudstack slaves node MariaDB Galera cluster
+```
+ansible-playbook deploy-cloudstack.yml -i hosts -k -u root -e "mysql_cloud_password=Cl0ud5tack-Cl0ud cloudstack_release=4.19 cloudstack_systemvmtemplate=4.19.1 nodetype=slave db_endpoint=10.35.10.78"
 ```
 You will be prompted for the root password of the target host.
 

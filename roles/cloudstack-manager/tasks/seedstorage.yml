@@ -8,4 +8,5 @@
     -F
   register: install_sys_tmplt_output
   loop: "{{ systemvm_templates }}"
+  when: nodetype == 'master' or (install_local_db is defined and install_local_db == 'true')
   changed_when: "'Successfully installed system VM template' in install_sys_tmplt_output.stdout"
