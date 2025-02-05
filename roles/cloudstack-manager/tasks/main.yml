@@ -28,6 +28,18 @@
   ansible.builtin.apt:
     update_cache: true
 
+- name: Install Chrony
+  ansible.builtin.apt:
+    name: chrony
+    state: present
+    update_cache: yes
+
+- name: Enable and start Chrony service
+  ansible.builtin.systemd:
+    name: chrony
+    enabled: yes
+    state: started
+
 - name: Install Cloudstack Management
   ansible.builtin.apt:
     name:
