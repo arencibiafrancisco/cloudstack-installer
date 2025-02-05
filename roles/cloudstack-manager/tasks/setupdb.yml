@@ -1,6 +1,6 @@
 ---
 - name: Setup CloudStack master node with local db
-  ansible.builtin.command: "/usr/bin/cloudstack-setup-databases 'cloud':'{{ mysql_cloud_password }}'@'localhost' --deploy-as=root:{{ mysql_root_password }}"
+  ansible.builtin.command: "/usr/bin/cloudstack-setup-databases 'cloud':'{{ mysql_cloud_password }}'@'localhost' --deploy-as=root:{{ mysql_root_password }} -i 127.0.0.1"
   when:
     - install_local_db is defined
     - install_local_db == 'true'
@@ -10,7 +10,7 @@
   ansible.builtin.command: >
     /usr/bin/cloudstack-setup-databases
     'cloud':'{{ mysql_cloud_password }}'@'{{ db_endpoint }}'
-    --deploy-as=root:{{ mysql_root_password }}
+    --deploy-as=root:{{ mysql_root_password }} -i 127.0.0.1
   when:
     - nodetype is defined
     - nodetype == 'master'
@@ -18,7 +18,7 @@
   changed_when: true
 
 - name: Setup CloudStack slave node
-  ansible.builtin.command: "/usr/bin/cloudstack-setup-databases 'cloud':'{{ mysql_cloud_password }}'@'{{ db_endpoint }}'"
+  ansible.builtin.command: "/usr/bin/cloudstack-setup-databases 'cloud':'{{ mysql_cloud_password }}'@'{{ db_endpoint }}' -i 127.0.0.1"
   when:
     - nodetype is defined
     - nodetype == 'slave'
